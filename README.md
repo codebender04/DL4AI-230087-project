@@ -18,10 +18,6 @@ DL4AI-230087-project/
 └── README.md                       # This file
 ```
 
-> **Note on data:** The datasets are not included in this repository due to their size. All data files are stored on Google Drive and mounted directly inside the notebook. See the **Data Setup** section below for details.
-
----
-
 ## Model Architecture
 
 All tasks use a **CNN-LSTM hybrid** architecture:
@@ -38,75 +34,6 @@ Dense(n_outputs)       ← 1 for Tasks 1–2, K for multi-step, sigmoid for Task
 - **Conv1D layers** extract short-term local patterns (e.g. 3–5 day price formations)
 - **LSTM layer** captures longer sequential dependencies
 - **Task 3** uses binary cross-entropy loss with a sigmoid output and inverse-frequency class weights to handle label imbalance
-
----
-
-## Data Setup
-
-All data is stored on Google Drive. To run the notebook:
-
-1. Upload the data folder to your Google Drive. The expected structure is:
-
-```
-MyDrive/DL4AI-project/
-│
-├── AAPL.csv                         # Nasdaq AAPL historical data
-├── ticker-overview.csv              # Vietnam company overview
-├── companies.csv                    # Vietnam company list
-│
-├── stock-historical-data/
-│   ├── ACB-VNINDEX-History.csv
-│   ├── VCB-VNINDEX-History.csv
-│   └── ...                          # One CSV per company
-│
-├── industry-analysis/
-│   ├── ACB-VNINDEX-Industry.csv
-│   └── ...
-│
-├── dividend-history/
-│   └── ...
-│
-└── financial-ratio/
-    └── ...
-```
-
-2. Mount Google Drive at the start of the notebook:
-
-```python
-from google.colab import drive
-drive.mount('/content/drive')
-```
-
-3. Update `BASE_PATH` in the notebook if your folder name differs:
-
-```python
-BASE_PATH = '/content/drive/MyDrive/DL4AI-project'  # adjust if needed
-```
-
----
-
-## How to Run
-
-### Requirements
-
-The notebook runs on **Google Colab** with no additional installations required. All dependencies come pre-installed:
-
-```
-tensorflow >= 2.x
-numpy
-pandas
-matplotlib
-scikit-learn
-scipy
-```
-
-### Steps
-
-1. Open `230087-project-notebook.ipynb` in Google Colab
-2. Mount Google Drive (first cell)
-3. Run all cells in order — each task section is clearly labelled
-
-> **Important:** Run the notebook top-to-bottom. Later tasks (3, 4) depend on `vn_data` loaded in Task 2. Do not skip sections or restart the runtime between tasks.
 
 ---
 
@@ -145,31 +72,3 @@ All splits are strictly **chronological (80 / 10 / 10)**. Random shuffling is ne
 | Regression (Tasks 1, 2, 4) | RMSE, MAE, MAPE |
 | Classification (Task 3) | F1, ROC-AUC, Precision, Recall, Confusion Matrix |
 | Portfolio (Task 4) | Expected return, Risk score, Final score (return/risk) |
-
----
-
-## Results Summary
-
-### Task 1 — AAPL (test set)
-| Subtask | Description | MAPE |
-|---------|-------------|------|
-| 1.1 | Next-day prediction | See notebook |
-| 1.2 | Day +7 prediction | Higher than 1.1 (expected) |
-| 1.3 | 7-day consecutive | Increases per horizon |
-
-### Task 3 — VCB Trading Signals
-| Model | AUC | Notes |
-|-------|-----|-------|
-| Buy signal | See notebook | AUC > 0.5 = above random chance |
-| Sell signal | See notebook | Evaluated with optimal threshold |
-
-> Exact numerical results are available in the notebook output cells.
-
----
-
-## References
-
-- TensorFlow Documentation — https://www.tensorflow.org/api_docs
-- Scikit-learn Documentation — https://scikit-learn.org/stable/
-- Hochreiter & Schmidhuber (1997). Long Short-Term Memory. *Neural Computation*, 9(8).
-- Murphy, J. J. (1999). *Technical Analysis of the Financial Markets*. New York Institute of Finance.
